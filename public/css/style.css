@@ -604,140 +604,168 @@ kbd {
   .score-val    { font-size: 18px; }
   .control-list { display: none; }   /* hide keyboard hints on tablet */
 }
-
-/* ── Mobile portrait (≤600px) ────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE (≤600px) — fullscreen canvas, gesture controls, floating HUD
+   ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 600px) {
 
-  /* Full screen, no scroll */
   #game-screen {
-    align-items: stretch;
-    justify-content: stretch;
+    position: relative;
     overflow: hidden;
+    width: 100vw;
     height: 100vh;
     height: 100dvh;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
-  /* Vertical flex: stats bar on top, game row below */
+  /* Layout becomes a single stacking context — canvas fills everything */
   .game-layout {
-    flex-direction: column;
-    align-items: stretch;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
     padding: 0;
-    gap: 0;
+  }
+
+  /* Hide desktop side panels completely */
+  .side-panel { display: none !important; }
+
+  /* mobile-game-row fills parent */
+  .mobile-game-row {
+    display: flex;
     width: 100%;
     height: 100%;
   }
 
-  /* ── TOP STATS BAR ── */
-  .left-panel {
-    order: 1;
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 0;
-    padding: 4px 6px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+  /* Canvas fills full screen */
+  .game-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
-  .left-panel .panel-block {
-    flex: 1;
-    min-width: 0;
-    padding: 4px 6px;
-    border: none;
-    border-right: 1px solid var(--border);
-    border-radius: 0;
-    background: none;
+  #game-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    object-fit: fill;
+    touch-action: none;
+  }
+
+  /* Hide old button-based controls */
+  .touch-controls,
+  .touch-controls-right { display: none !important; }
+
+  /* ── Floating HUD overlay ── */
+  .mobile-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    padding: 8px 12px;
+    background: linear-gradient(to bottom, rgba(7,7,15,0.85) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .mobile-hud-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+  }
+
+  .mobile-hud-label {
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    font-family: var(--font);
+  }
+
+  .mobile-hud-value {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--font);
+    color: var(--text);
+  }
+
+  .mobile-hud-value.is-score { color: var(--green); text-shadow: 0 0 8px rgba(57,255,20,.5); }
+  .mobile-hud-value.is-level { color: var(--cyan); }
+
+  /* ── Mobile tutorial screen ── */
+  .mobile-tutorial {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(7, 7, 15, 0.97);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 28px;
+  }
+
+  .mobile-tutorial.hidden { display: none; }
+
+  .tutorial-title {
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: var(--cyan);
+    text-shadow: 0 0 12px var(--cyan);
     text-align: center;
   }
 
-  .left-panel .panel-block:last-child { border-right: none; }
-
-  /* Hide hold + actions from the top bar */
-  .left-panel .hold-block,
-  .left-panel .panel-actions { display: none; }
-
-  .panel-label { font-size: 7px; letter-spacing: 2px; }
-  .panel-value { font-size: 14px; }
-  .score-val   { font-size: 16px; }
-
-  /* ── MIDDLE ROW: left-controls | canvas | right-controls ── */
-  .game-layout > .side-panel.right-panel { display: none; }
-
-  .touch-controls {
-    order: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    width: 70px;
-    flex-shrink: 0;
-    padding: 8px 4px;
-    gap: 6px;
-    border-right: 1px solid var(--border);
+  .tutorial-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    width: 100%;
+    max-width: 320px;
   }
 
-  .touch-controls-right {
-    order: 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    width: 70px;
-    flex-shrink: 0;
-    padding: 8px 4px;
-    gap: 6px;
-    border-left: 1px solid var(--border);
-  }
-
-  .game-wrapper {
-    order: 2;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    min-height: 0;
-    padding: 4px 0;
-  }
-
-  /* Height-driven canvas: fills available height, maintains 1:2 ratio */
-  #game-canvas {
-    height: 100% !important;
-    width: auto !important;
-    max-width: 100%;
-    aspect-ratio: 1 / 2;
-  }
-
-  /* Wrap the middle row in flex */
-  .mobile-game-row {
-    order: 2;
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  .touch-btn {
-    width: 54px;
-    height: 48px;
-    font-size: 17px;
+  .tutorial-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
     border-radius: 10px;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
   }
 
-  .touch-drop {
-    width: 54px;
-    font-size: 7px;
-    letter-spacing: 1px;
+  .tutorial-gesture {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .tutorial-action {
+    font-family: var(--font);
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .tutorial-action strong {
+    display: block;
+    color: var(--text);
+    font-size: 0.75rem;
+    margin-bottom: 2px;
   }
 }
 
 /* ── Very small phones (≤380px) ─────────────────────────────────────────────── */
 @media (max-width: 380px) {
-  .touch-controls,
-  .touch-controls-right { width: 58px; }
-  .touch-btn            { width: 48px; height: 42px; font-size: 15px; }
-  .touch-drop           { width: 48px; font-size: 6px; }
-  .panel-value          { font-size: 12px; }
+  .mobile-hud-value { font-size: 14px; }
 }

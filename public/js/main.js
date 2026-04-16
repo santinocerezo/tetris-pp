@@ -92,40 +92,117 @@ function showGame() {
 function setupTouchControls() {
   if (!('ontouchstart' in window) && navigator.maxTouchPoints === 0) return;
 
-  const touchPanel = document.getElementById('touch-controls');
-  const touchPanelR = document.getElementById('touch-controls-right');
-  touchPanel.classList.remove('hidden');
-  if (touchPanelR) touchPanelR.classList.remove('hidden');
+  // ── Show mobile HUD ──────────────────────────────────────────────────────────
+  const mobileHud = document.getElementById('mobile-hud');
+  if (mobileHud) mobileHud.style.display = 'flex';
 
-  function holdAction(id, action, intervalMs) {
-    let interval = null;
-    const el = document.getElementById(id);
-    if (!el) return;
+  // ── Tutorial (shown once per device) ────────────────────────────────────────
+  const tutorialEl  = document.getElementById('mobile-tutorial');
+  const tutorialBtn = document.getElementById('tutorial-ok');
+  const SEEN_KEY    = 'tetris_tutorial_seen';
 
-    el.addEventListener('touchstart', e => {
-      e.preventDefault();
-      action();
-      interval = setInterval(action, intervalMs);
-    }, { passive: false });
-
-    el.addEventListener('touchend',   () => clearInterval(interval));
-    el.addEventListener('touchcancel',() => clearInterval(interval));
+  if (tutorialEl && !localStorage.getItem(SEEN_KEY)) {
+    tutorialEl.classList.remove('hidden');
+    tutorialBtn.addEventListener('click', () => {
+      localStorage.setItem(SEEN_KEY, '1');
+      tutorialEl.classList.add('hidden');
+    }, { once: true });
   }
 
-  function tapAction(id, action) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('touchstart', e => { e.preventDefault(); action(); }, { passive: false });
-  }
+  // ── Gesture recognition on canvas ───────────────────────────────────────────
+  const canvas = document.getElementById('game-canvas');
 
-  holdAction('btn-left',  () => { if (game && !game.over && !game.paused) game.moveLeft();   }, 80);
-  holdAction('btn-right', () => { if (game && !game.over && !game.paused) game.moveRight();  }, 80);
-  holdAction('btn-down',  () => { if (game && !game.over && !game.paused) game.moveDown();   }, 60);
+  const SWIPE_THRESHOLD  = 30;   // px min to count as swipe
+  const HOLD_REPEAT_MS   = 80;   // ms between repeated left/right moves
+  const DOUBLE_TAP_MS    = 280;  // ms window for double tap
 
-  tapAction('btn-rotate',     () => { if (game && !game.over && !game.paused) game.rotate(1);  });
-  tapAction('btn-rotate-ccw', () => { if (game && !game.over && !game.paused) game.rotate(-1); });
-  tapAction('btn-hold',       () => { if (game && !game.over && !game.paused) game.hold();     });
-  tapAction('btn-drop',       () => { if (game && !game.over && !game.paused) game.hardDrop(); });
+  let touchStartX  = 0;
+  let touchStartY  = 0;
+  let touchStartT  = 0;
+  let lastTapT     = 0;
+  let moveInterval = null;
+  let swiped       = false;
+
+  function canAct() { return game && !game.gameOver && !game.paused; }
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const t  = e.changedTouches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    touchStartT = Date.now();
+    swiped      = false;
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (swiped || !canAct()) return;
+
+    const t  = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+
+    if (adx < SWIPE_THRESHOLD && ady < SWIPE_THRESHOLD) return;
+
+    swiped = true;
+
+    if (adx > ady) {
+      // Horizontal swipe — move piece, keep repeating while finger held
+      const dir = dx > 0 ? 'right' : 'left';
+      const move = dir === 'right' ? () => game.moveRight() : () => game.moveLeft();
+      move();
+      clearInterval(moveInterval);
+      moveInterval = setInterval(() => { if (canAct()) move(); }, HOLD_REPEAT_MS);
+    } else {
+      // Vertical swipe
+      if (dy < 0) {
+        // Swipe UP → rotate CW
+        game.rotate(1);
+      } else {
+        // Swipe DOWN → soft drop (repeat)
+        game.moveDown();
+        clearInterval(moveInterval);
+        moveInterval = setInterval(() => { if (canAct()) game.moveDown(); }, 60);
+      }
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    clearInterval(moveInterval);
+    moveInterval = null;
+
+    if (!swiped) {
+      // It was a tap — check for double tap → hard drop
+      const now = Date.now();
+      if (now - lastTapT < DOUBLE_TAP_MS) {
+        if (canAct()) game.hardDrop();
+        lastTapT = 0;
+      } else {
+        lastTapT = now;
+      }
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchcancel', () => {
+    clearInterval(moveInterval);
+    moveInterval = null;
+    swiped = false;
+  });
+}
+
+// ── Sync mobile HUD values ─────────────────────────────────────────────────────
+function syncMobileHud() {
+  const mScore = document.getElementById('m-score');
+  const mBest  = document.getElementById('m-best');
+  const mLevel = document.getElementById('m-level');
+  const mLines = document.getElementById('m-lines');
+  if (!mScore || !game) return;
+  mScore.textContent = formatScore(game.score);
+  mBest.textContent  = formatScore(Math.max(game.score, playerScores[0]?.score ?? 0));
+  mLevel.textContent = game.level;
+  mLines.textContent = game.lines;
 }
 
 // ── Login ──────────────────────────────────────────────────────────────────────
@@ -227,6 +304,7 @@ function updateHUD() {
 
   const best = Math.max(bestScore(), game.score);
   bestScoreEl.textContent = formatScore(best);
+  syncMobileHud();
 }
 
 async function handleGameOver() {
