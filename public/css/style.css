@@ -541,3 +541,146 @@ kbd {
   100% { transform: scale(1);    }
 }
 .score-pop { animation: score-pop 0.3s ease-out; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Touch controls ─────────────────────────────────────────────────────────── */
+.touch-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0 8px;
+  width: 100%;
+}
+
+.touch-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.touch-btn {
+  width: 60px;
+  height: 52px;
+  background: rgba(0 245 255 / 0.07);
+  border: 1px solid rgba(0 245 255 / 0.25);
+  border-radius: 10px;
+  color: var(--cyan);
+  font-family: var(--font);
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.08s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.touch-btn:active {
+  background: rgba(0 245 255 / 0.22);
+  transform: scale(0.92);
+}
+
+.touch-drop {
+  width: 140px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--green);
+  border-color: rgba(57 255 20 / 0.35);
+  background: rgba(57 255 20 / 0.07);
+}
+
+.touch-drop:active { background: rgba(57 255 20 / 0.22); }
+
+/* ── Tablet / small desktop (≤900px) ────────────────────────────────────────── */
+@media (max-width: 900px) {
+  :root { --panel-w: 130px; }
+
+  .game-layout { gap: 10px; padding: 10px; }
+
+  .panel-value  { font-size: 16px; }
+  .score-val    { font-size: 18px; }
+  .control-list { display: none; }   /* hide keyboard hints on tablet */
+}
+
+/* ── Mobile portrait (≤600px) ────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Stack layout vertically */
+  #game-screen {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .game-layout {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 8px;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* Top bar: score + level + hold in a row */
+  .side-panel {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .left-panel  { order: 1; }
+  .game-wrapper { order: 2; }
+  .touch-controls { order: 3; }
+  .right-panel { order: 4; }
+
+  .panel-block {
+    flex: 1 1 80px;
+    min-width: 70px;
+    padding: 8px 10px;
+  }
+
+  /* Hide low-priority panels on mobile */
+  .right-panel .leaderboard-block,
+  .right-panel .controls-block { display: none; }
+
+  .panel-actions {
+    flex-direction: row;
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .panel-actions button { flex: 1; }
+
+  /* Canvas: scale to fit viewport width */
+  .game-wrapper { width: 100%; display: flex; justify-content: center; }
+
+  #game-canvas {
+    /* Scale canvas visually — actual resolution stays 300×600 */
+    width: min(300px, calc(100vw - 16px)) !important;
+    height: auto !important;
+    aspect-ratio: 1 / 2;
+  }
+
+  /* Show touch controls */
+  .touch-controls { display: flex; }
+
+  .panel-value { font-size: 15px; }
+  .score-val   { font-size: 17px; }
+
+  /* Hold canvas in top bar */
+  .hold-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .hold-block canvas { margin: 0; }
+}
+
+/* ── Very small phones (≤380px) ─────────────────────────────────────────────── */
+@media (max-width: 380px) {
+  .touch-btn      { width: 52px; height: 46px; font-size: 16px; }
+  .touch-drop     { width: 120px; }
+  .panel-value    { font-size: 13px; }
+}

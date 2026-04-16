@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
   <title>TETRIS — Neon Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -92,6 +92,23 @@
           </div>
         </div>
       </main>
+
+      <!-- Mobile touch controls -->
+      <div id="touch-controls" class="touch-controls hidden">
+        <div class="touch-row">
+          <button class="touch-btn" id="btn-rotate-ccw">↺</button>
+          <button class="touch-btn touch-up" id="btn-rotate">↑</button>
+          <button class="touch-btn" id="btn-hold">HOLD</button>
+        </div>
+        <div class="touch-row">
+          <button class="touch-btn touch-side" id="btn-left">◀</button>
+          <button class="touch-btn touch-down" id="btn-down">▼</button>
+          <button class="touch-btn touch-side" id="btn-right">▶</button>
+        </div>
+        <div class="touch-row">
+          <button class="touch-btn touch-drop" id="btn-drop">DROP</button>
+        </div>
+      </div>
 
       <!-- Right panel -->
       <aside class="side-panel right-panel">

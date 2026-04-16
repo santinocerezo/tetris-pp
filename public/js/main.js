@@ -85,6 +85,45 @@ function showLogin() {
 function showGame() {
   loginScreen.classList.remove('active');
   gameScreen.classList.add('active');
+  setupTouchControls();
+}
+
+// ── Touch controls (mobile) ────────────────────────────────────────────────────
+function setupTouchControls() {
+  if (!('ontouchstart' in window) && navigator.maxTouchPoints === 0) return;
+
+  const touchPanel = document.getElementById('touch-controls');
+  touchPanel.classList.remove('hidden');
+
+  function holdAction(id, action, intervalMs) {
+    let interval = null;
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.addEventListener('touchstart', e => {
+      e.preventDefault();
+      action();
+      interval = setInterval(action, intervalMs);
+    }, { passive: false });
+
+    el.addEventListener('touchend',   () => clearInterval(interval));
+    el.addEventListener('touchcancel',() => clearInterval(interval));
+  }
+
+  function tapAction(id, action) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('touchstart', e => { e.preventDefault(); action(); }, { passive: false });
+  }
+
+  holdAction('btn-left',  () => { if (game && !game.over && !game.paused) game.moveLeft();   }, 80);
+  holdAction('btn-right', () => { if (game && !game.over && !game.paused) game.moveRight();  }, 80);
+  holdAction('btn-down',  () => { if (game && !game.over && !game.paused) game.moveDown();   }, 60);
+
+  tapAction('btn-rotate',     () => { if (game && !game.over && !game.paused) game.rotate(1);  });
+  tapAction('btn-rotate-ccw', () => { if (game && !game.over && !game.paused) game.rotate(-1); });
+  tapAction('btn-hold',       () => { if (game && !game.over && !game.paused) game.hold();     });
+  tapAction('btn-drop',       () => { if (game && !game.over && !game.paused) game.hardDrop(); });
 }
 
 // ── Login ──────────────────────────────────────────────────────────────────────
