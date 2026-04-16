@@ -607,80 +607,137 @@ kbd {
 
 /* ── Mobile portrait (≤600px) ────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  /* Stack layout vertically */
+
+  /* Full screen, no scroll */
   #game-screen {
-    align-items: flex-start;
-    overflow-y: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
   }
 
+  /* Vertical flex: stats bar on top, game row below */
   .game-layout {
     flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── TOP STATS BAR ── */
+  .left-panel {
+    order: 1;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0;
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .left-panel .panel-block {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 6px;
+    border: none;
+    border-right: 1px solid var(--border);
+    border-radius: 0;
+    background: none;
     align-items: center;
-    padding: 10px 8px;
-    gap: 8px;
-    width: 100%;
+    text-align: center;
   }
 
-  /* Top bar: score + level + hold in a row */
-  .side-panel {
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
+  .left-panel .panel-block:last-child { border-right: none; }
+
+  /* Hide hold + actions from the top bar */
+  .left-panel .hold-block,
+  .left-panel .panel-actions { display: none; }
+
+  .panel-label { font-size: 7px; letter-spacing: 2px; }
+  .panel-value { font-size: 14px; }
+  .score-val   { font-size: 16px; }
+
+  /* ── MIDDLE ROW: left-controls | canvas | right-controls ── */
+  .game-layout > .side-panel.right-panel { display: none; }
+
+  .touch-controls {
+    order: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 70px;
+    flex-shrink: 0;
+    padding: 8px 4px;
     gap: 6px;
+    border-right: 1px solid var(--border);
   }
 
-  .left-panel  { order: 1; }
-  .game-wrapper { order: 2; }
-  .touch-controls { order: 3; }
-  .right-panel { order: 4; }
-
-  .panel-block {
-    flex: 1 1 80px;
-    min-width: 70px;
-    padding: 8px 10px;
+  .touch-controls-right {
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 70px;
+    flex-shrink: 0;
+    padding: 8px 4px;
+    gap: 6px;
+    border-left: 1px solid var(--border);
   }
 
-  /* Hide low-priority panels on mobile */
-  .right-panel .leaderboard-block,
-  .right-panel .controls-block { display: none; }
-
-  .panel-actions {
-    flex-direction: row;
-    margin-top: 0;
-    width: 100%;
+  .game-wrapper {
+    order: 2;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 0;
+    padding: 4px 0;
   }
 
-  .panel-actions button { flex: 1; }
-
-  /* Canvas: scale to fit viewport width */
-  .game-wrapper { width: 100%; display: flex; justify-content: center; }
-
+  /* Height-driven canvas: fills available height, maintains 1:2 ratio */
   #game-canvas {
-    /* Scale canvas visually — actual resolution stays 300×600 */
-    width: min(300px, calc(100vw - 16px)) !important;
-    height: auto !important;
+    height: 100% !important;
+    width: auto !important;
+    max-width: 100%;
     aspect-ratio: 1 / 2;
   }
 
-  /* Show touch controls */
-  .touch-controls { display: flex; }
-
-  .panel-value { font-size: 15px; }
-  .score-val   { font-size: 17px; }
-
-  /* Hold canvas in top bar */
-  .hold-block {
+  /* Wrap the middle row in flex */
+  .mobile-game-row {
+    order: 2;
+    flex: 1;
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
   }
-  .hold-block canvas { margin: 0; }
+
+  .touch-btn {
+    width: 54px;
+    height: 48px;
+    font-size: 17px;
+    border-radius: 10px;
+  }
+
+  .touch-drop {
+    width: 54px;
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
 }
 
 /* ── Very small phones (≤380px) ─────────────────────────────────────────────── */
 @media (max-width: 380px) {
-  .touch-btn      { width: 52px; height: 46px; font-size: 16px; }
-  .touch-drop     { width: 120px; }
-  .panel-value    { font-size: 13px; }
+  .touch-controls,
+  .touch-controls-right { width: 58px; }
+  .touch-btn            { width: 48px; height: 42px; font-size: 15px; }
+  .touch-drop           { width: 48px; font-size: 6px; }
+  .panel-value          { font-size: 12px; }
 }

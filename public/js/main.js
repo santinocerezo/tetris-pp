@@ -93,7 +93,9 @@ function setupTouchControls() {
   if (!('ontouchstart' in window) && navigator.maxTouchPoints === 0) return;
 
   const touchPanel = document.getElementById('touch-controls');
+  const touchPanelR = document.getElementById('touch-controls-right');
   touchPanel.classList.remove('hidden');
+  if (touchPanelR) touchPanelR.classList.remove('hidden');
 
   function holdAction(id, action, intervalMs) {
     let interval = null;
