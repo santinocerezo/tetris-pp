@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TETRIS — Neon Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Login Screen ─────────────────────────────────────────────────────── -->
+  <div id="login-screen" class="screen active">
+    <div class="login-bg-lines" aria-hidden="true"></div>
+    <div class="login-container">
+      <h1 class="game-title">TETRIS</h1>
+      <p class="game-subtitle">NEON EDITION</p>
+
+      <div class="login-form">
+        <label for="nickname-input" class="form-label">ENTER YOUR NAME</label>
+        <input
+          type="text"
+          id="nickname-input"
+          class="name-input"
+          placeholder="e.g. SantoCZ"
+          maxlength="30"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="play-btn" class="btn-primary">PLAY</button>
+        <p id="login-error" class="login-error hidden"></p>
+      </div>
+
+      <div class="login-hint">No password needed. Your scores are saved automatically.</div>
+    </div>
+  </div>
+
+  <!-- ── Game Screen ──────────────────────────────────────────────────────── -->
+  <div id="game-screen" class="screen">
+    <div class="game-layout">
+
+      <!-- Left panel -->
+      <aside class="side-panel left-panel">
+        <div class="panel-block">
+          <span class="panel-label">PLAYER</span>
+          <span id="player-name" class="panel-value neon-cyan truncate"></span>
+        </div>
+
+        <div class="panel-block">
+          <span class="panel-label">SCORE</span>
+          <span id="score" class="panel-value score-val">0</span>
+        </div>
+
+        <div class="panel-block">
+          <span class="panel-label">BEST</span>
+          <span id="best-score" class="panel-value neon-yellow">0</span>
+        </div>
+
+        <div class="panel-block">
+          <span class="panel-label">LEVEL</span>
+          <span id="level" class="panel-value">1</span>
+        </div>
+
+        <div class="panel-block">
+          <span class="panel-label">LINES</span>
+          <span id="lines" class="panel-value">0</span>
+        </div>
+
+        <div class="panel-block hold-block">
+          <span class="panel-label">HOLD  <kbd>C</kbd></span>
+          <canvas id="hold-canvas" width="90" height="70"></canvas>
+        </div>
+
+        <div class="panel-actions">
+          <button id="history-btn" class="btn-secondary">HISTORY</button>
+          <button id="logout-btn"  class="btn-ghost">LOG OUT</button>
+        </div>
+      </aside>
+
+      <!-- Game canvas + overlay -->
+      <main class="game-wrapper">
+        <canvas id="game-canvas" width="300" height="600"></canvas>
+
+        <div id="overlay" class="overlay hidden">
+          <div class="overlay-box">
+            <h2 id="overlay-title" class="overlay-title"></h2>
+            <p  id="overlay-score" class="overlay-score"></p>
+            <p  id="overlay-lines" class="overlay-lines"></p>
+            <button id="restart-btn" class="btn-primary mt-16">PLAY AGAIN</button>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right panel -->
+      <aside class="side-panel right-panel">
+        <div class="panel-block">
+          <span class="panel-label">NEXT</span>
+          <canvas id="next-canvas" width="90" height="70"></canvas>
+        </div>
+
+        <div class="panel-block controls-block">
+          <span class="panel-label">CONTROLS</span>
+          <ul class="control-list">
+            <li><kbd>← →</kbd><span>Move</span></li>
+            <li><kbd>↑</kbd><span>Rotate CW</span></li>
+            <li><kbd>Z</kbd><span>Rotate CCW</span></li>
+            <li><kbd>↓</kbd><span>Soft drop</span></li>
+            <li><kbd>Space</kbd><span>Hard drop</span></li>
+            <li><kbd>C</kbd><span>Hold</span></li>
+            <li><kbd>P</kbd><span>Pause</span></li>
+          </ul>
+        </div>
+
+        <div class="panel-block leaderboard-block">
+          <span class="panel-label">TOP 10</span>
+          <div id="leaderboard-list" class="leaderboard-list">
+            <span class="lb-loading">Loading…</span>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- ── History Modal ────────────────────────────────────────────────────── -->
+  <div id="history-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Score History">
+    <div class="modal-backdrop"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">SCORE HISTORY</h2>
+        <button id="close-history" class="btn-close" aria-label="Close">✕</button>
+      </div>
+      <div id="history-content" class="history-content"></div>
+    </div>
+  </div>
+
+  <script src="/js/tetris.js"></script>
+  <script src="/js/renderer.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
