@@ -35,6 +35,32 @@
 
       <div class="login-hint">No password needed. Your scores are saved automatically.</div>
     </div>
+
+    <!-- All scores table -->
+    <div class="login-scores">
+      <div class="login-scores-header">
+        <h3>ALL SCORES</h3>
+        <span id="login-scores-count" class="login-scores-count"></span>
+      </div>
+      <div class="login-scores-wrap">
+        <table class="login-scores-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>PLAYER</th>
+              <th>SCORE</th>
+              <th>LEVEL</th>
+              <th>LINES</th>
+              <th>DATE</th>
+            </tr>
+          </thead>
+          <tbody id="login-scores-body">
+            <tr><td colspan="6" class="ls-loading">Loading scores...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── Game Screen ──────────────────────────────────────────────────────── -->

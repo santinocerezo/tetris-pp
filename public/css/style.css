@@ -44,8 +44,11 @@ html, body {
 #login-screen {
   position: relative;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-direction: column;
+  padding: 40px 16px;
 }
 
 /* Animated background lines */
@@ -92,6 +95,8 @@ html, body {
     0 0 40px rgba(0 245 255 / 0.08),
     0 0 80px rgba(191 0 255 / 0.05);
   min-width: 340px;
+  width: 100%;
+  max-width: 480px;
 }
 
 .game-title {
@@ -768,4 +773,101 @@ kbd {
 /* ── Very small phones (≤380px) ─────────────────────────────────────────────── */
 @media (max-width: 380px) {
   .mobile-hud-value { font-size: 14px; }
+}
+
+/* ── Login Scores Table ──────────────────────────────────────────────────────── */
+.login-scores {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  margin-top: 20px;
+  background: rgba(10 10 22 / 0.85);
+  border: 1px solid rgba(0 245 255 / 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.login-scores-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid rgba(0 245 255 / 0.1);
+}
+
+.login-scores-header h3 {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(0 245 255 / 0.5);
+}
+
+.login-scores-count {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+
+.login-scores-wrap {
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0 245 255 / 0.3) transparent;
+}
+.login-scores-wrap::-webkit-scrollbar { width: 4px; }
+.login-scores-wrap::-webkit-scrollbar-track { background: transparent; }
+.login-scores-wrap::-webkit-scrollbar-thumb { background: rgba(0 245 255 / 0.3); border-radius: 2px; }
+
+.login-scores-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.login-scores-table thead {
+  position: sticky;
+  top: 0;
+  background: rgba(7 7 15 / 0.95);
+  z-index: 1;
+}
+
+.login-scores-table th {
+  padding: 8px 10px;
+  text-align: left;
+  color: var(--text-muted);
+  font-size: 9px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(255 255 255 / 0.06);
+}
+.login-scores-table th:first-child { text-align: center; }
+
+.login-scores-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255 255 255 / 0.04);
+  color: var(--text);
+}
+
+.login-scores-table tbody tr:hover { background: rgba(255 255 255 / 0.03); }
+.login-scores-table tbody tr:last-child td { border-bottom: none; }
+
+.login-scores-table .col-rank { text-align: center; color: var(--text-muted); }
+.login-scores-table .col-score { color: var(--green); font-weight: 700; }
+.login-scores-table .col-date { color: var(--text-muted); font-size: 9px; }
+
+.login-scores-table .gold   { color: #ffd700; text-shadow: 0 0 6px rgba(255 215 0 / 0.8); }
+.login-scores-table .silver { color: #c0c0c0; text-shadow: 0 0 6px rgba(192 192 192 / 0.6); }
+.login-scores-table .bronze { color: #cd7f32; text-shadow: 0 0 6px rgba(205 127 50 / 0.6); }
+
+.login-scores-table .row-gold   td { background: rgba(255 215 0 / 0.04); }
+.login-scores-table .row-silver td { background: rgba(192 192 192 / 0.03); }
+.login-scores-table .row-bronze td { background: rgba(205 127 50 / 0.03); }
+
+.ls-loading {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 10px;
+  padding: 20px;
 }

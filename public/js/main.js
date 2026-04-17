@@ -339,6 +339,7 @@ async function saveScore() {
       playerScores = data.scores || [];
       bestScoreEl.textContent = formatScore(bestScore());
       updateLeaderboard();
+      loadLoginScores();
     }
   } catch {
     // Score loss on network error is acceptable — don't block the UI
@@ -555,6 +556,46 @@ logoutBtn.addEventListener('click', () => {
   showLogin();
 });
 
+// ── Login screen scores table ──────────────────────────────────────────────────
+
+async function loadLoginScores() {
+  const tbody = document.getElementById('login-scores-body');
+  const countEl = document.getElementById('login-scores-count');
+  if (!tbody) return;
+
+  try {
+    const res  = await fetch('/api/leaderboard');
+    const rows = await res.json();
+
+    if (!rows || !rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="ls-loading">No scores yet — be the first!</td></tr>';
+      if (countEl) countEl.textContent = '';
+      return;
+    }
+
+    if (countEl) countEl.textContent = `${rows.length} games`;
+
+    const medals = ['🥇', '🥈', '🥉'];
+    tbody.innerHTML = rows.map((r, i) => {
+      const d = new Date(r.created_at);
+      const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+      const rankClass = i < 3 ? ['gold','silver','bronze'][i] : '';
+      return `
+        <tr class="${rankClass ? 'row-' + rankClass : ''}">
+          <td class="col-rank ${rankClass}">${medals[i] ?? i + 1}</td>
+          <td class="col-name">${escapeHtml(r.nickname)}</td>
+          <td class="col-score">${formatScore(r.score)}</td>
+          <td>${r.level ?? 0}</td>
+          <td>${r.lines ?? 0}</td>
+          <td class="col-date">${dateStr}</td>
+        </tr>
+      `;
+    }).join('');
+  } catch {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="ls-loading">Could not load scores.</td></tr>';
+  }
+}
+
 // ── Auto-fill nickname from last session ───────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('tetris_nick');
@@ -564,4 +605,5 @@ window.addEventListener('DOMContentLoaded', () => {
   } else {
     nicknameInput.focus();
   }
+  loadLoginScores();
 });
