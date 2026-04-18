@@ -125,6 +125,9 @@
         </div>
       </div>
 
+      <!-- Mobile FAB to open score history (shown only on mobile via CSS) -->
+      <button id="mobile-scores-btn" class="mobile-fab" aria-label="Show scores" title="Scores">🏆</button>
+
       <!-- Canvas + overlay (desktop: inside flex row, mobile: fullscreen) -->
       <div class="mobile-game-row">
         <main class="game-wrapper">
@@ -136,6 +139,8 @@
               <p  id="overlay-score" class="overlay-score"></p>
               <p  id="overlay-lines" class="overlay-lines"></p>
               <button id="restart-btn" class="btn-primary mt-16">PLAY AGAIN</button>
+              <button id="overlay-scores-btn" class="btn-secondary mt-16" style="max-width:260px">ALL SCORES</button>
+              <button id="overlay-logout-btn" class="btn-ghost">LOG OUT</button>
             </div>
           </div>
         </main>
@@ -177,10 +182,15 @@
     <div class="modal-backdrop"></div>
     <div class="modal-box">
       <div class="modal-header">
-        <h2 class="modal-title">SCORE HISTORY</h2>
+        <h2 class="modal-title">SCORES</h2>
         <button id="close-history" class="btn-close" aria-label="Close">✕</button>
       </div>
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="mine">MY HISTORY</button>
+        <button class="modal-tab" data-tab="all">ALL PLAYERS</button>
+      </div>
       <div id="history-content" class="history-content"></div>
+      <div id="all-scores-content" class="history-content hidden"></div>
     </div>
   </div>
 

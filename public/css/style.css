@@ -775,6 +775,131 @@ kbd {
   .mobile-hud-value { font-size: 14px; }
 }
 
+/* ── Login scores table — mobile tweaks ─────────────────────────────────────── */
+@media (max-width: 600px) {
+  #login-screen {
+    padding: 20px 10px 32px;
+    justify-content: flex-start;
+  }
+
+  .login-container {
+    min-width: 0;
+    padding: 28px 20px;
+  }
+
+  .game-title { font-size: 40px; letter-spacing: 8px; }
+  .game-subtitle { font-size: 10px; letter-spacing: 6px; }
+
+  .login-scores {
+    margin-top: 14px;
+    max-width: 100%;
+  }
+
+  .login-scores-header { padding: 10px 12px 8px; }
+  .login-scores-header h3 { font-size: 9px; letter-spacing: 3px; }
+
+  .login-scores-wrap {
+    max-height: 60vh;
+  }
+
+  .login-scores-table { font-size: 9px; }
+
+  .login-scores-table th,
+  .login-scores-table td {
+    padding: 6px 6px;
+  }
+
+  .login-scores-table th { font-size: 8px; letter-spacing: 1px; }
+
+  .col-name {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 380px) {
+  .login-scores-table .col-date,
+  .login-scores-table th:last-child { display: none; }
+}
+
+/* ── Mobile FAB (floating action button for scores) ──────────────────────────── */
+.mobile-fab {
+  display: none;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 15;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(0 245 255 / 0.12);
+  border: 1px solid rgba(0 245 255 / 0.45);
+  color: var(--cyan);
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(0 245 255 / 0.35);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform 0.1s, background 0.15s;
+}
+.mobile-fab:active { transform: scale(0.92); background: rgba(0 245 255 / 0.28); }
+
+@media (max-width: 600px) {
+  .mobile-fab { display: flex; align-items: center; justify-content: center; }
+}
+
+/* ── History modal tabs ──────────────────────────────────────────────────────── */
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 10px 8px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.modal-tab:hover { color: var(--text); }
+.modal-tab.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+  text-shadow: 0 0 8px rgba(0 245 255 / 0.5);
+}
+
+/* Wider modal for mobile — all-scores needs room */
+@media (max-width: 600px) {
+  .modal-box {
+    min-width: 0;
+    width: 94vw;
+    max-height: 86vh;
+    padding: 20px 14px;
+  }
+  .modal-title { font-size: 13px; letter-spacing: 3px; }
+  .history-entry { font-size: 10px; padding: 8px 10px; grid-template-columns: 24px 1fr auto auto; gap: 6px; }
+  .h-score { font-size: 14px; }
+}
+
+/* All-scores table inside modal — reuses login-scores table look */
+.modal-box .login-scores {
+  margin-top: 0;
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+}
+.modal-box .login-scores-header { display: none; }
+.modal-box .login-scores-wrap { max-height: 60vh; }
+
 /* ── Login Scores Table ──────────────────────────────────────────────────────── */
 .login-scores {
   position: relative;
@@ -811,10 +936,12 @@ kbd {
 }
 
 .login-scores-wrap {
-  max-height: 320px;
+  max-height: 420px;
   overflow-y: auto;
+  overflow-x: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(0 245 255 / 0.3) transparent;
+  -webkit-overflow-scrolling: touch;
 }
 .login-scores-wrap::-webkit-scrollbar { width: 4px; }
 .login-scores-wrap::-webkit-scrollbar-track { background: transparent; }
@@ -864,6 +991,7 @@ kbd {
 .login-scores-table .row-gold   td { background: rgba(255 215 0 / 0.04); }
 .login-scores-table .row-silver td { background: rgba(192 192 192 / 0.03); }
 .login-scores-table .row-bronze td { background: rgba(205 127 50 / 0.03); }
+.login-scores-table .row-me td { background: rgba(0 245 255 / 0.08); border-left: 2px solid var(--cyan); }
 
 .ls-loading {
   text-align: center;

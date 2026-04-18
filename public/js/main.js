@@ -26,9 +26,14 @@ const restartBtn    = document.getElementById('restart-btn');
 const historyBtn    = document.getElementById('history-btn');
 const logoutBtn     = document.getElementById('logout-btn');
 
-const historyModal  = document.getElementById('history-modal');
-const closeHistory  = document.getElementById('close-history');
-const historyContent= document.getElementById('history-content');
+const historyModal    = document.getElementById('history-modal');
+const closeHistory    = document.getElementById('close-history');
+const historyContent  = document.getElementById('history-content');
+const allScoresContent= document.getElementById('all-scores-content');
+const modalTabs       = document.querySelectorAll('.modal-tab');
+const mobileScoresBtn = document.getElementById('mobile-scores-btn');
+const overlayScoresBtn= document.getElementById('overlay-scores-btn');
+const overlayLogoutBtn= document.getElementById('overlay-logout-btn');
 
 const leaderboardEl = document.getElementById('leaderboard-list');
 
@@ -377,20 +382,86 @@ async function updateLeaderboard() {
 
 // ── History modal ──────────────────────────────────────────────────────────────
 
-function showHistoryModal() {
+function renderMyHistory() {
   if (!playerScores.length) {
     historyContent.innerHTML = '<p class="history-empty">No games yet. Play one!</p>';
-  } else {
-    historyContent.innerHTML = playerScores
-      .map((s, i) => `
-        <div class="history-entry">
-          <span class="h-rank">#${i + 1}</span>
-          <span class="h-score">${formatScore(s.score)}</span>
-          <span class="h-details">Lv.${s.level} · ${s.lines} lines</span>
-          <span class="h-date">${formatDate(s.created_at)}</span>
-        </div>`)
-      .join('');
+    return;
   }
+  historyContent.innerHTML = playerScores
+    .map((s, i) => `
+      <div class="history-entry">
+        <span class="h-rank">#${i + 1}</span>
+        <span class="h-score">${formatScore(s.score)}</span>
+        <span class="h-details">Lv.${s.level} · ${s.lines} lines</span>
+        <span class="h-date">${formatDate(s.created_at)}</span>
+      </div>`)
+    .join('');
+}
+
+async function renderAllScores() {
+  allScoresContent.innerHTML = '<p class="history-empty">Loading…</p>';
+  try {
+    const res  = await fetch('/api/leaderboard');
+    const rows = await res.json();
+    if (!rows || !rows.length) {
+      allScoresContent.innerHTML = '<p class="history-empty">No scores yet.</p>';
+      return;
+    }
+    const medals = ['🥇', '🥈', '🥉'];
+    allScoresContent.innerHTML = `
+      <div class="login-scores">
+        <div class="login-scores-wrap">
+          <table class="login-scores-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>PLAYER</th>
+                <th>SCORE</th>
+                <th>LV</th>
+                <th>LINES</th>
+                <th>DATE</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map((r, i) => {
+                const d = new Date(r.created_at);
+                const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+                const rankClass = i < 3 ? ['gold','silver','bronze'][i] : '';
+                const isMe = player && r.nickname === player.nickname;
+                return `
+                  <tr class="${rankClass ? 'row-' + rankClass : ''}${isMe ? ' row-me' : ''}">
+                    <td class="col-rank ${rankClass}">${medals[i] ?? i + 1}</td>
+                    <td class="col-name">${escapeHtml(r.nickname)}</td>
+                    <td class="col-score">${formatScore(r.score)}</td>
+                    <td>${r.level ?? 0}</td>
+                    <td>${r.lines ?? 0}</td>
+                    <td class="col-date">${dateStr}</td>
+                  </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  } catch {
+    allScoresContent.innerHTML = '<p class="history-error">Could not load scores.</p>';
+  }
+}
+
+function switchTab(tab) {
+  modalTabs.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  if (tab === 'mine') {
+    historyContent.classList.remove('hidden');
+    allScoresContent.classList.add('hidden');
+    renderMyHistory();
+  } else {
+    historyContent.classList.add('hidden');
+    allScoresContent.classList.remove('hidden');
+    renderAllScores();
+  }
+}
+
+function showHistoryModal(initialTab = 'mine') {
+  switchTab(initialTab);
   historyModal.classList.remove('hidden');
   // Pause game while browsing history
   if (game && !game.gameOver && !game.paused) {
@@ -529,7 +600,23 @@ restartBtn.addEventListener('click', () => {
   startNewGame();
 });
 
-historyBtn.addEventListener('click', showHistoryModal);
+historyBtn.addEventListener('click', () => showHistoryModal('mine'));
+
+modalTabs.forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+if (mobileScoresBtn) {
+  mobileScoresBtn.addEventListener('click', () => showHistoryModal('all'));
+}
+
+if (overlayScoresBtn) {
+  overlayScoresBtn.addEventListener('click', () => showHistoryModal('all'));
+}
+
+if (overlayLogoutBtn) {
+  overlayLogoutBtn.addEventListener('click', () => logoutBtn.click());
+}
 
 closeHistory.addEventListener('click', () => {
   closeHistoryModal();

@@ -75,8 +75,7 @@ async function createPostgresDb() {
         SELECT p.nickname, s.score, s.level, s.lines, s.created_at
         FROM scores s
         JOIN players p ON s.player_id = p.id
-        ORDER BY s.score DESC
-        LIMIT 20
+        ORDER BY s.score DESC, s.created_at DESC
       `);
       return rows;
     },
@@ -136,8 +135,7 @@ async function createSqliteDb() {
         SELECT p.nickname, s.score, s.level, s.lines, s.created_at
         FROM scores s
         JOIN players p ON s.player_id = p.id
-        ORDER BY s.score DESC
-        LIMIT 20
+        ORDER BY s.score DESC, s.created_at DESC
       `).all();
     },
   };
