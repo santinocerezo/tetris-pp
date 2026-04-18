@@ -1,5 +1,4 @@
 node_modules/
-tetris.db
 .env
 *.log
 .DS_Store
